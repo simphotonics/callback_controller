@@ -1,7 +1,7 @@
 name: callback_controller
 
-description: Controls the call frequency of a callback and exposes a stream
-  that emits the controller state.
+description: Controls the call frequency of a callback and exposes a stream that
+  emits the controller state.
 
 version: 0.0.1
 
@@ -10,14 +10,13 @@ homepage: https://github.com/simphotonics/callback_controller
 topics:
   - callback
   - debounce
+  - throttle
   - stream
   - controller
 
 environment:
-  sdk: ^3.0.0
-
-dependencies:
+  sdk: ^3.7.0
 
 dev_dependencies:
-  lints: ^5.0.0
-  test: ^1.24.0
+  lints: ^5.1.1
+  test: ^1.25.15

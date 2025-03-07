@@ -2,6 +2,9 @@ import 'package:test/test.dart';
 
 import 'src/callback.dart';
 
+/// Represent a ...lkjljklkj
+typedef Pair = ({int first, String second});
+
 void main() {
   final duration = Duration(milliseconds: 100);
   group('Initialize:', () {
@@ -20,4 +23,6 @@ void main() {
           greaterThanOrEqualTo(duration.inMicroseconds));
     });
   });
+
+  final Pair pair = (first: 1, second: 'hi');
 }

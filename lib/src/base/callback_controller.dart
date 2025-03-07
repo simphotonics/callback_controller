@@ -11,27 +11,24 @@ FutureOr<void> defaultCallback() {}
 /// To delay the execution by [duration] use [CallbackController.delayer].
 abstract class CallbackController {
   CallbackController({required this.duration})
-      : current = CallbackControllerState.ready.stamp,
-        _controller = StreamController<CallbackControllerState>()
-          ..add(CallbackControllerState.ready);
+    : current = CallbackControllerState.ready.stamp,
+      _controller =
+          StreamController<CallbackControllerState>()
+            ..add(CallbackControllerState.ready);
 
   /// Runs a callback as soon as possible and limits the calling frequency
   /// to one call per [duration].
   ///
   /// Use case: Preventing a user from making numerous expensive requests
   /// (e.g. by pressing a button widget repeatedly withing a short timespan).
-  factory CallbackController.limiter({
-    Duration duration = const Duration(seconds: 1),
-  }) =>
+  factory CallbackController.limiter({required Duration duration}) =>
       CallbackLimiter(duration: duration);
 
   /// Waits for [duration] before running a callback.
   ///
   /// Use case: Collecting and aggregating input from a Futter `TextField`
   /// while the user is typing and only processing the input after [duration].
-  factory CallbackController.delayer({
-    Duration duration = const Duration(seconds: 1),
-  }) =>
+  factory CallbackController.delayer({required Duration duration}) =>
       CallbackDelayer(duration: duration);
 
   /// After the event [CallbackControllerState.delaying] is added the stream
