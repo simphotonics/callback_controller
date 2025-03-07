@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:callback_controller/callback_controller.dart';
 import 'package:test/test.dart';
 
@@ -10,7 +8,7 @@ void main() {
   group('Initialize:', () {
     test('state', () {
       final limiter = CallbackLimiter(duration: duration);
-      expect(limiter.currentState.isReady, isTrue);
+      expect(limiter.current.state.isReady, isTrue);
       expect(limiter.stream, emitsInOrder([ready]));
       expect(limiter.duration, Duration(milliseconds: 100));
     });
@@ -61,32 +59,34 @@ void main() {
   });
 
   group('Repeated delayed runs:', () {
-    test('pause exceeding limiter duration', () {
+    test('pause exceeding limiter duration', () async {
       final limiter = CallbackLimiter(duration: duration);
       final callback = Callback();
       final events0 = [ready, busy, delaying];
       final events = <CallbackControllerState>[];
       for (var i = 0; i < 10; i++) {
         limiter.run(callback.call);
-        sleep(Duration(milliseconds: 100));
+        await Future.delayed(duration + Duration(milliseconds: 100));
         events.addAll(events0);
       }
 
       expect(limiter.stream, emitsInOrder(events));
       expect(callback.calls, 10);
+      final stamps = callback.microsecondsTimeStamps;
+      expect(stamps[1] - stamps[0], greaterThan(duration.inMilliseconds));
     });
   });
 
-  test('pause below limiter duration', () {
-    final limiter = CallbackLimiter(duration: duration);
+  test('pause below limiter duration', () async {
     final callback = Callback();
     final events0 = [ready, busy, delaying];
     final events = <CallbackControllerState>[];
+    final limiter = CallbackLimiter(duration: duration);
 
     final delayinMilliseconds = 38;
     for (var i = 0; i < 10; i++) {
       limiter.run(callback.call);
-      sleep(Duration(milliseconds: delayinMilliseconds));
+      await Future.delayed(Duration(milliseconds: delayinMilliseconds));
     }
 
     final calls = callback.calls;
@@ -100,6 +100,10 @@ void main() {
       calls,
       (delayinMilliseconds * 10 / (limiter.duration.inMilliseconds)).ceil(),
     );
+    if (calls > 1) {
+      final stamps = callback.microsecondsTimeStamps;
+      expect(stamps[1] - stamps[0], greaterThan(duration.inMicroseconds));
+    }
   });
 
   group('Repeated delayed async runs:', () {
@@ -110,7 +114,7 @@ void main() {
       final events = <CallbackControllerState>[];
       for (var i = 0; i < 10; i++) {
         await limiter.runAsync(callback.callAsync);
-        sleep(Duration(milliseconds: 100));
+        await Future.delayed(Duration(milliseconds: 150));
         events.addAll(events0);
       }
 
@@ -128,15 +132,13 @@ void main() {
     final delayinMilliseconds = 38;
     for (var i = 0; i < 10; i++) {
       await limiter.runAsync(callback.callAsync);
-      sleep(Duration(milliseconds: delayinMilliseconds));
+      await Future.delayed(Duration(milliseconds: delayinMilliseconds));
     }
 
     final calls = callback.calls;
-
     for (var i = 0; i < calls; i++) {
       events.addAll(events0);
     }
-
     expect(limiter.stream, emitsInOrder(events));
     expect(
       calls,

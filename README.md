@@ -3,6 +3,7 @@
 
 [![Dart](https://github.com/simphotonics/callback_controller/actions/workflows/dart.yml/badge.svg)](https://github.com/simphotonics/callback_controller/actions/workflows/dart.yml)
 
+
 ## Introduction
 
 Functions that include e.g. network calls, database queries, writing/reading
@@ -30,10 +31,47 @@ latest call is finally executed. Debouncing can be achieved using the method
 To use this library include [`callback_controller`][callback_controller]
 as a dependency in your `pubspec.yaml` file.
 
+
+[`CallbackController`][CallbackController] exposes a [stream] emitting events of
+type [`CallbackControllerState][CallbackControllerState]. The stream can be used
+with Flutter's [StreamBuilder] to create responsive widgets. For example, a
+button could be styled differently if the current callback controller *state* is
+[ready][ready], [busy][busy], or [delaying][delaying].
+
 ### Limiting Function Calls
+
+Defining a callback controller:
+
+```Dart
+import 'dart:async';
+
+import 'package:callback_controller/callback_controller.dart';
+
+void callback(){
+  print('In callback');
+}
+
+Future<void> main(List<String> arguments) async {
+  final duration = Duration(milliseconds: 200);
+
+  // Defining the controller.
+  final limiter = CallbackLimiter(duration: duration));
+
+  // Alternatively, use the provided factory constructor:
+  // final limiter = CallbackController.limiter(duration: duration));
+
+  // Passing the the callback to the method run of the controller.
+  limiter.run(callback);
+}
+```
 
 The example below shows how to limit the number of function calls using
 a controller of type [`CallbackLimiter`][CallbackLimiter].
+The program includes a loop in which a callback is run five times.
+The actual callback is passed to the method `limiter.run` and the controller
+is configured to delay subsequent calls by at least 200 milliseconds.
+
+<details> <summary> Click to show the entire program listing. </summary>
 
 ```Dart
 import 'dart:async';
@@ -65,6 +103,7 @@ Future<void> main(List<String> arguments) async {
   }
 }
 ```
+</details>
 <details> <summary> Click to show the console output. </summary>
 
 ```Console
@@ -93,11 +132,8 @@ Step 4 -------------------------- 9s:740ms:443us -----------
 ```
 </details>
 
-The program includes a loop in which a callback is run five times.
-The actual callback is passed to the method `limiter.run` and the controller
-is configured to delay subsequent calls by at least 200 milliseconds.
-
-There is a delay of 100 milliseconds between each calls.
+Note that there is a delay of 100 milliseconds
+between subsequent callback runs.
 As the console output shows, the callback is run immediately in step 0,
 and then again in step 2 after a delay of 212 milliseconds,
 and in step 4, after a delay of 203 milliseconds.
@@ -105,8 +141,10 @@ and in step 4, after a delay of 203 milliseconds.
 
 ### Delaying and Limiting Function Calls
 
-The example below shows how to delay and limit the number of function calls
+The example below shows how to *delay* and limit the number of function calls
 using a controller of type [`CallbackDelayer`][CallbackDelayer].
+
+<details> <summary> Click to show the entire program listing. </summary>
 
 ```Dart
 import 'dart:async';
@@ -138,6 +176,7 @@ Future<void> main(List<String> arguments) async {
   }
 }
 ```
+</details>
 <details> <summary> Click to show the console output. </summary>
 
 ```Console
@@ -168,12 +207,12 @@ Step 4 -------------------------- 31s:655ms:617us -----------
 
 The program above includes a loop in which a callback is run five times.
 The actual callback is passed to the method `delayer.run` and the controller
-is configured to delay subsequent calls by at least 200 milliseconds and
+is configured to delay subsequent calls by at least 200 milliseconds. Note that
 there is a delay of 100 milliseconds between subsequent calls.
 As the console output shows, the callback is *not* run in step 0.
-Instead it is called in step 1 after a delay of 209 ms. The callback is run
-again in step 3 after a delay of 207 ms and after step 4 after a delay of 202
-milliseconds.
+Instead, it is called in step 1 after a delay of 209 ms. The callback is run
+again in step 3 after a delay of 207 ms. The callback is also run after
+step 4 following a delay of 202 milliseconds.
 
 ## Examples
 

@@ -20,7 +20,7 @@ Future<void> main(List<String> arguments) async {
     print('Step $i ----------------- ${DateTime.now().smsus} -----------');
     await delayer.runAsync(() async {
       Future.delayed(Duration(milliseconds: 125), () {
-        print('    \\$i/  in callback: ${delayer.currentState}');
+        print('    \\$i/  in callback: ${delayer.current}');
       });
     });
     await Future.delayed(Duration(milliseconds: 150));

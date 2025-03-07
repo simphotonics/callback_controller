@@ -9,6 +9,18 @@ enum CallbackControllerState {
   /// The state after the callback has finished and before the state [ready].
   delaying;
 
+  /// Returns `true` if `this == DebounceState.ready` and false otherwise.
+  bool get isReady => this == CallbackControllerState.ready;
+
+  /// Returns `true` if `this != DebounceState.ready` and false otherwise.
+  bool get isNotReady => this != CallbackControllerState.ready;
+
+  /// Returns `true` if `this == DebounceState.busy` and false otherwise.
+  bool get isBusy => this == CallbackControllerState.busy;
+
+  /// Returns `true` if `this == DebounceState.resetting` and false otherwise.
+  bool get isDelaying => this == CallbackControllerState.delaying;
+
   @override
   String toString() => name;
 
@@ -24,18 +36,6 @@ class TimeStampedCallbackControllerState {
   TimeStampedCallbackControllerState({required this.state});
   final CallbackControllerState state;
   final DateTime dateTimeStamp = DateTime.now();
-
-  /// Returns `true` if `this == DebounceState.ready` and false otherwise.
-  bool get isReady => state == CallbackControllerState.ready;
-
-  /// Returns `true` if `this != DebounceState.ready` and false otherwise.
-  bool get isNotReady => state != CallbackControllerState.ready;
-
-  /// Returns `true` if `this == DebounceState.busy` and false otherwise.
-  bool get isBusy => state == CallbackControllerState.busy;
-
-  /// Returns `true` if `this == DebounceState.resetting` and false otherwise.
-  bool get isDelaying => state == CallbackControllerState.delaying;
 
   @override
   String toString() => '$state ${dateTimeStamp.smsus}';

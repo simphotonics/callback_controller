@@ -8,10 +8,10 @@ FutureOr<void> defaultCallback() {}
 /// [duration].
 ///
 /// To run the callback as soon as possible use [CallbackController.limiter].
-/// To delay the execution of run use [CallbackController.delayer].
+/// To delay the execution by [duration] use [CallbackController.delayer].
 abstract class CallbackController {
   CallbackController({required this.duration})
-      : currentState = CallbackControllerState.ready.stamp,
+      : current = CallbackControllerState.ready.stamp,
         _controller = StreamController<CallbackControllerState>()
           ..add(CallbackControllerState.ready);
 
@@ -43,15 +43,15 @@ abstract class CallbackController {
 
   /// The current state.
   ///
-  /// Note: [currentState].state is last event added to [stream].
-  TimeStampedCallbackControllerState currentState;
+  /// Note: [current].state is the last event added to [stream].
+  TimeStampedCallbackControllerState current;
 
   /// Returns `true` if the last state added to [stream] was
   /// [CallbackControllerState.delaying] and [DateTime.now] is after
-  /// [currentState.dateTime] plus [duration].
+  /// [current.dateTime] plus [duration].
   bool get hasTimedOut {
-    return (currentState.isBusy || currentState.isDelaying) &&
-        DateTime.now().isAfter(currentState.dateTimeStamp.add(duration));
+    return (current.state.isDelaying) &&
+        DateTime.now().isAfter(current.dateTimeStamp.add(duration));
   }
 
   /// Runs and awaits [callback] and adds events to [stream].
@@ -73,8 +73,8 @@ abstract class CallbackController {
 
   void _add(CallbackControllerState controllerState) {
     if (!_controller.isClosed) {
-      currentState = controllerState.stamp;
-      _controller.add(currentState.state);
+      current = controllerState.stamp;
+      _controller.add(current.state);
     }
   }
 }
@@ -85,7 +85,7 @@ abstract class CallbackController {
 /// Use case: Preventing a user from making numerous expensive requests (e.g. by
 /// pressing a button repeatedly withing a short timespan).
 class CallbackLimiter extends CallbackController {
-  CallbackLimiter({super.duration = const Duration(seconds: 1)});
+  CallbackLimiter({required super.duration});
 
   /// Runs [callback] and adds events to [stream] using the following sequence:
   ///
@@ -96,7 +96,7 @@ class CallbackLimiter extends CallbackController {
       _add(CallbackControllerState.ready);
     }
 
-    if (currentState.isNotReady) {
+    if (current.state.isNotReady) {
       return;
     }
 
@@ -115,7 +115,7 @@ class CallbackLimiter extends CallbackController {
       _add(CallbackControllerState.ready);
     }
 
-    if (currentState.isNotReady) {
+    if (current.state.isNotReady) {
       return;
     }
 
@@ -149,7 +149,7 @@ class CallbackDelayer extends CallbackController {
     // Update callback to make sure the latest version is called.
     _callback = callback;
 
-    if (currentState.isReady) {
+    if (current.state.isReady) {
       _add(CallbackControllerState.delaying);
       _timer = Timer(duration, () async {
         try {
@@ -173,7 +173,7 @@ class CallbackDelayer extends CallbackController {
     // Update callback to make sure the latest version is called.
     _callback = callback;
 
-    if (currentState.isReady) {
+    if (current.state.isReady) {
       _add(CallbackControllerState.delaying);
       _timer = Timer(duration, () async {
         try {
@@ -191,12 +191,13 @@ class CallbackDelayer extends CallbackController {
   @override
   void _add(CallbackControllerState controllerState) {
     if (!_controller.isClosed) {
-      currentState = controllerState.stamp;
-      _controller.add(currentState.state);
+      current = controllerState.stamp;
+      _controller.add(current.state);
     }
   }
 
-  /// Closes the controller such that no further events will be added to stream.
+  /// Closes the controller such that no further events will be added to
+  /// [stream].
   /// Any unfinished timers will be cancelled.
   ///
   /// This method should be called in the `onDispose()` method of a
