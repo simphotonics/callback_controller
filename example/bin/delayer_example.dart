@@ -17,8 +17,10 @@ Future<void> main(List<String> arguments) async {
   );
 
   for (var i = 0; i < 5; i++) {
-    print('Step $i -------------------------- ${DateTime.now().smsus} ------'
-        '-----');
+    print(
+      'Step $i -------------------------- ${DateTime.now().smsus} ------'
+      '-----',
+    );
     delayer.run(() {
       print('    in callback from step $i: ${delayer.current}');
     });

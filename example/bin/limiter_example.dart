@@ -18,7 +18,8 @@ Future<void> main(List<String> arguments) async {
 
   for (var i = 0; i < 5; i++) {
     print(
-        'Step $i -------------------------- ${DateTime.now().smsus} -----------');
+      'Step $i -------------------------- ${DateTime.now().smsus} -----------',
+    );
     limiter.run(() {
       print('    in callback from step $i: ${limiter.current}');
     });
