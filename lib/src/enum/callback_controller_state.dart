@@ -42,6 +42,7 @@ class TimeStampedCallbackControllerState {
 }
 
 extension OneMilliMicroSeconds on DateTime {
-  String get smsus => '${second}s:${'$millisecond'.padLeft(3, '0')}ms:'
+  String get smsus =>
+      '${second}s:${'$millisecond'.padLeft(3, '0')}ms:'
       '${'$microsecond'.padLeft(3, '0')}us';
 }

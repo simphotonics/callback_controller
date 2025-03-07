@@ -75,29 +75,26 @@ void main() {
       await expectLater(delayer.stream, emitsInOrder(events));
       await expectLater(callback.calls, 5);
     });
-    test(
-      'pause shorter than delayer duration',
-      () async {
-        final delayer = CallbackDelayer(duration: duration);
-        final callback = Callback();
-        final events0 = [ready, delaying, busy];
-        final events = <CallbackControllerState>[];
+    test('pause shorter than delayer duration', () async {
+      final delayer = CallbackDelayer(duration: duration);
+      final callback = Callback();
+      final events0 = [ready, delaying, busy];
+      final events = <CallbackControllerState>[];
 
-        final delayinMilliseconds = 38;
-        for (var i = 0; i < 10; i++) {
-          delayer.run(callback.call);
-          await Future.delayed(Duration(milliseconds: delayinMilliseconds));
-        }
+      final delayinMilliseconds = 38;
+      for (var i = 0; i < 10; i++) {
+        delayer.run(callback.call);
+        await Future.delayed(Duration(milliseconds: delayinMilliseconds));
+      }
 
-        final calls = callback.calls;
+      final calls = callback.calls;
 
-        for (var i = 0; i < calls; i++) {
-          events.addAll(events0);
-        }
+      for (var i = 0; i < calls; i++) {
+        events.addAll(events0);
+      }
 
-        expect(delayer.stream, emitsInOrder(events));
-      },
-    );
+      expect(delayer.stream, emitsInOrder(events));
+    });
   });
 
   group('Repeated delayed async runs:', () {

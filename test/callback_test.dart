@@ -2,9 +2,6 @@ import 'package:test/test.dart';
 
 import 'src/callback.dart';
 
-/// Represent a ...lkjljklkj
-typedef Pair = ({int first, String second});
-
 void main() {
   final duration = Duration(milliseconds: 100);
   group('Initialize:', () {
@@ -19,10 +16,10 @@ void main() {
       final callback = Callback();
       await Future.delayed(duration);
       callback.call();
-      expect(callback.microsecondsTimeStamps[0],
-          greaterThanOrEqualTo(duration.inMicroseconds));
+      expect(
+        callback.microsecondsTimeStamps[0],
+        greaterThanOrEqualTo(duration.inMicroseconds),
+      );
     });
   });
-
-  final Pair pair = (first: 1, second: 'hi');
 }
