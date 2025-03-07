@@ -36,7 +36,11 @@ abstract class CallbackController {
   /// [CallbackControllerState.ready] is added.
   final Duration duration;
 
+  /// Stream controller providing [stream].
   final StreamController<CallbackControllerState> _controller;
+
+  /// Delay timer
+  Timer? _timer;
 
   /// The current state.
   ///
@@ -57,11 +61,14 @@ abstract class CallbackController {
   /// Runs [callback] and adds events to [stream].
   void run(FutureOr<void> Function() callback);
 
-  /// Closes [stream], such that no further events can be added to it.
+  /// Closes the controller such that no further events will be added to
+  /// [stream].
+  /// Any unfinished timers will be cancelled.
   ///
-  /// Should be called in the `onDispose()` method of a widget using
-  /// [CallbackController].
+  /// This method should be called in the `onDispose()` method of a
+  /// Flutter widget.
   Future close() {
+    _timer?.cancel();
     return _controller.close();
   }
 
@@ -89,40 +96,36 @@ class CallbackLimiter extends CallbackController {
   /// * [busy], [delaying],[ready].
   @override
   Future<void> runAsync(FutureOr<void> Function() callback) async {
-    if (hasTimedOut) {
-      _add(CallbackControllerState.ready);
+    if (current.state.isReady) {
+      try {
+        _add(busy);
+        await callback();
+        _add(delaying);
+      } catch (error, stacktrace) {
+        _controller.addError(error, stacktrace);
+      } finally {
+        _timer = Timer(duration, () {
+          _add(ready);
+        });
+      }
     }
-
-    if (current.state.isNotReady) {
-      return;
-    }
-
-    try {
-      _add(CallbackControllerState.busy);
-      await callback();
-    } catch (error, stacktrace) {
-      _controller.addError(error, stacktrace);
-    }
-    _add(CallbackControllerState.delaying);
   }
 
   @override
   void run(FutureOr<void> Function() callback) {
-    if (hasTimedOut) {
-      _add(CallbackControllerState.ready);
+    if (current.state.isReady) {
+      try {
+        _add(busy);
+        callback();
+        _add(delaying);
+      } catch (error, stacktrace) {
+        _controller.addError(error, stacktrace);
+      } finally {
+        _timer = Timer(duration, () {
+          _add(ready);
+        });
+      }
     }
-
-    if (current.state.isNotReady) {
-      return;
-    }
-
-    try {
-      _add(CallbackControllerState.busy);
-      callback();
-    } catch (error, stacktrace) {
-      _controller.addError(error, stacktrace);
-    }
-    _add(CallbackControllerState.delaying);
   }
 }
 
@@ -133,7 +136,6 @@ class CallbackLimiter extends CallbackController {
 class CallbackDelayer extends CallbackController {
   CallbackDelayer({required super.duration});
 
-  Timer? _timer;
   late FutureOr<void> Function() _callback = defaultCallback;
 
   /// Delays the runnign of [callback] and emits events in the following sequence:
@@ -147,18 +149,19 @@ class CallbackDelayer extends CallbackController {
     _callback = callback;
 
     if (current.state.isReady) {
-      _add(CallbackControllerState.delaying);
+      _add(delaying);
       _timer = Timer(duration, () async {
         try {
-          _add(CallbackControllerState.busy);
+          _add(busy);
           await _callback();
         } catch (error, stacktrace) {
           _controller.addError(error, stacktrace);
         } finally {
-          _add(CallbackControllerState.ready);
+          _add(ready);
         }
       });
     }
+
   }
 
   /// Delays running [callback].
@@ -171,15 +174,15 @@ class CallbackDelayer extends CallbackController {
     _callback = callback;
 
     if (current.state.isReady) {
-      _add(CallbackControllerState.delaying);
-      _timer = Timer(duration, () async {
+      _add(delaying);
+      _timer = Timer(duration, () {
         try {
-          _add(CallbackControllerState.busy);
+          _add(busy);
           _callback();
         } catch (error, stacktrace) {
           _controller.addError(error, stacktrace);
         } finally {
-          _add(CallbackControllerState.ready);
+          _add(ready);
         }
       });
     }
@@ -191,17 +194,5 @@ class CallbackDelayer extends CallbackController {
       current = controllerState.stamp;
       _controller.add(current.state);
     }
-  }
-
-  /// Closes the controller such that no further events will be added to
-  /// [stream].
-  /// Any unfinished timers will be cancelled.
-  ///
-  /// This method should be called in the `onDispose()` method of a
-  /// Flutter widget.
-  @override
-  Future close() {
-    _timer?.cancel();
-    return _controller.close();
   }
 }

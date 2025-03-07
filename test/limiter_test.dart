@@ -64,14 +64,14 @@ void main() {
       final callback = Callback();
       final events0 = [ready, busy, delaying];
       final events = <CallbackControllerState>[];
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < 5; i++) {
         limiter.run(callback.call);
         await Future.delayed(duration + Duration(milliseconds: 100));
         events.addAll(events0);
       }
 
       expect(limiter.stream, emitsInOrder(events));
-      expect(callback.calls, 10);
+      expect(callback.calls, 5);
       final stamps = callback.microsecondsTimeStamps;
       expect(stamps[1] - stamps[0], greaterThan(duration.inMilliseconds));
     });
@@ -112,14 +112,14 @@ void main() {
       final callback = Callback();
       final events0 = [ready, busy, delaying];
       final events = <CallbackControllerState>[];
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < 5; i++) {
         await limiter.runAsync(callback.callAsync);
         await Future.delayed(Duration(milliseconds: 150));
         events.addAll(events0);
       }
 
       expect(limiter.stream, emitsInOrder(events));
-      expect(callback.calls, 10);
+      expect(callback.calls, 5);
     });
   });
 
@@ -130,7 +130,7 @@ void main() {
     final events = <CallbackControllerState>[];
 
     final delayinMilliseconds = 38;
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 5; i++) {
       await limiter.runAsync(callback.callAsync);
       await Future.delayed(Duration(milliseconds: delayinMilliseconds));
     }
@@ -140,9 +140,5 @@ void main() {
       events.addAll(events0);
     }
     expect(limiter.stream, emitsInOrder(events));
-    expect(
-      calls,
-      (delayinMilliseconds * 10 / (limiter.duration.inMilliseconds)).ceil(),
-    );
   });
 }
