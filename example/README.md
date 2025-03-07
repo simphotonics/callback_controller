@@ -10,7 +10,8 @@ as a dependency in your `pubspec.yaml` file.
 
 
 [`CallbackController`][CallbackController] exposes a [stream] emitting events of
-type [`CallbackControllerState][CallbackControllerState]. The stream can be used
+type [`CallbackControllerState`][CallbackControllerState].
+The stream can be used
 with Flutter's [StreamBuilder] to create responsive widgets. For example, a
 button could be styled differently if the current callback controller *state* is
 [ready][ready], [busy][busy], or [delaying][delaying].
