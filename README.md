@@ -13,9 +13,10 @@ considerably.
 
 In many situations, it makes sense to restrict frequent calls to such
 functions. The package introduced here, provides the eponymous
-class [`CallbackController`][CallbackController] that can be used to limit the number of times a
-callback is executed. When limiting the number of times a function is called there a two commonly used
-strategies:
+class [`CallbackController`][CallbackController] that can be used to limit the
+number of times a
+callback is executed. When limiting the number of times a function is called
+there a two commonly used strategies:
 * throttling: Calling the function as soon as possible and then
 rejecting subsequent calls for a certain time duration.
 This kind of behaviour can be achieved by using the methods
@@ -33,7 +34,8 @@ as a dependency in your `pubspec.yaml` file.
 
 
 [`CallbackController`][CallbackController] exposes a [stream] emitting events of
-type [`CallbackControllerState][CallbackControllerState]. The stream can be used
+type [`CallbackControllerState`][CallbackControllerState].
+The stream can be used
 with Flutter's [StreamBuilder] to create responsive widgets. For example, a
 button could be styled differently if the current callback controller *state* is
 [ready][ready], [busy][busy], or [delaying][delaying].
