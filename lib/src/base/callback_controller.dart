@@ -31,7 +31,7 @@ abstract class CallbackController {
   factory CallbackController.delayer({required Duration duration}) =>
       CallbackDelayer(duration: duration);
 
-  /// After the event [CallbackControllerState.delaying] is added the stream
+  /// After the event [delaying] is added the stream
   /// will wait for at least [duration] before the event
   /// [CallbackControllerState.ready] is added.
   final Duration duration;
@@ -44,8 +44,8 @@ abstract class CallbackController {
   TimeStampedCallbackControllerState current;
 
   /// Returns `true` if the last state added to [stream] was
-  /// [CallbackControllerState.delaying] and [DateTime.now] is after
-  /// [current.dateTime] plus [duration].
+  /// [delaying] and [DateTime.now] is after
+  /// [current].dateTimeStamp plus [duration].
   bool get hasTimedOut {
     return (current.state.isDelaying) &&
         DateTime.now().isAfter(current.dateTimeStamp.add(duration));

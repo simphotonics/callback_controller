@@ -236,3 +236,7 @@ Please file feature requests and bugs at the [issue tracker].
 [CallbackLimiter]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackLimiter-class.html
 
 [CallbackDelayer]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackDelayer-class.html
+
+[stream]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackController/stream.html
+
+[StreamBuilder]: https://api.flutter.dev/flutter/widgets/StreamBuilder-class.html
