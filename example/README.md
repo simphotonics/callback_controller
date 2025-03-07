@@ -33,7 +33,7 @@ Please file feature requests and bugs at the [issue tracker].
 
 [CallbackController]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackController-class.html
 
-CallbackControllerState]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackControllerState.html
+[CallbackControllerState]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackControllerState.html
 
 [CallbackLimiter]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackLimiter-class.html
 
