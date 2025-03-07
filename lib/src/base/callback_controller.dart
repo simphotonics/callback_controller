@@ -161,7 +161,6 @@ class CallbackDelayer extends CallbackController {
         }
       });
     }
-
   }
 
   /// Delays running [callback].
