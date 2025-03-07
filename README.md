@@ -240,3 +240,9 @@ Please file feature requests and bugs at the [issue tracker].
 [stream]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackController/stream.html
 
 [StreamBuilder]: https://api.flutter.dev/flutter/widgets/StreamBuilder-class.html
+
+[ready]:https://pub.dev/documentation/callback_controller/latest/callback_controller/ready-constant.html
+
+[busy]: https://pub.dev/documentation/callback_controller/latest/callback_controller/busy-constant.html
+
+[delaying]:https://pub.dev/documentation/callback_controller/latest/callback_controller/delaying-constant.html

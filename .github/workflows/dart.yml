@@ -49,4 +49,4 @@ jobs:
 
       # Run example
       - name: Run example
-        run: dart bin/limiter_example.dart
+        run: dart example/bin/limiter_example.dart

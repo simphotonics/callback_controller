@@ -54,6 +54,6 @@ echo
 echo -e "${BLUE}=== Running Example $PWD...${RESET}"
 echo
 
-dart bin/limiter_example.dart
+dart example/bin/limiter_example.dart
 
 echo
