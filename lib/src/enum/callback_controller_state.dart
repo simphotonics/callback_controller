@@ -18,8 +18,14 @@ enum CallbackControllerState {
   /// Returns `true` if `this == DebounceState.busy` and false otherwise.
   bool get isBusy => this == CallbackControllerState.busy;
 
+  /// Returns `true` if `this != DebounceState.busy` and false otherwise.
+  bool get isNotBusy => this != CallbackControllerState.busy;
+
   /// Returns `true` if `this == DebounceState.resetting` and false otherwise.
   bool get isDelaying => this == CallbackControllerState.delaying;
+
+  /// Returns `true` if `this != DebounceState.resetting` and false otherwise.
+  bool get isNotDelaying => this != CallbackControllerState.delaying;
 
   @override
   String toString() => name;

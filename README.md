@@ -6,17 +6,16 @@
 
 ## Introduction
 
-Functions that include e.g. network calls, database queries, writing/reading
-local data, have the potential
-of compromising the usability of an app or program by slowing it down
-considerably.
+Functions that require network calls, database queries, or writing/reading
+local data, have the potential of slowing down an app or program.
+In some situations, it makes sense to restrict frequent calls to such
+functions.
 
-In many situations, it makes sense to restrict frequent calls to such
-functions. The package introduced here, provides the eponymous
+The package introduced here, provides the eponymous
 class [`CallbackController`][CallbackController] that can be used to limit the
 number of times a
 callback is executed. When limiting the number of times a function is called
-there a two commonly used strategies:
+there are two commonly used strategies:
 * throttling: Calling the function as soon as possible and then
 rejecting subsequent calls for a certain time duration.
 This kind of behaviour can be achieved by using the methods
@@ -26,6 +25,7 @@ This kind of behaviour can be achieved by using the methods
 accepting  subsequent calls. After the timer has completed its countdown, the
 latest call is finally executed. Debouncing can be achieved using the method
 `run` and `runAsync` provided by [`CallbackDelayer`][CallbackDelayer].
+
 
 ## Usage
 
