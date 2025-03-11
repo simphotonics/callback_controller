@@ -1,6 +1,10 @@
+## 0.0.3
+
+Amended docs. 
+
 ## 0.0.2
 
-Fixed bug in [CallbackDelayer], by introducing a Timer that sets the state
+Fixed a bug in [CallbackLimiter], by introducing a Timer that sets the state
 [ready].
 
 ## 0.0.1
@@ -8,6 +12,6 @@ Fixed bug in [CallbackDelayer], by introducing a Timer that sets the state
 Initial version.
 
 
-[CallbackDelayer]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackDelayer-class.html
+[CallbackLimiter]: https://pub.dev/documentation/callback_controller/latest/callback_controller/CallbackLimiter-class.html
 
-ready]:https://pub.dev/documentation/callback_controller/latest/callback_controller/ready-constant.html
+[ready]:https://pub.dev/documentation/callback_controller/latest/callback_controller/ready-constant.html

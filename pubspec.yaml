@@ -3,7 +3,7 @@ name: callback_controller
 description: Controls the call frequency of a callback and exposes a stream that
   emits the controller state.
 
-version: 0.0.2
+version: 0.0.3
 
 homepage: https://github.com/simphotonics/callback_controller
 

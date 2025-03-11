@@ -42,7 +42,9 @@ button could be styled differently if the current callback controller *state* is
 
 ### Limiting Function Calls
 
-Defining a callback controller:
+To call a function as soon as possible and then
+reject subsequent calls for a certain time duration, one can use a controller
+of type [`CallbackLimiter`][CallbackLimiter]:
 
 ```Dart
 import 'dart:async';
@@ -71,7 +73,7 @@ The example below shows how to limit the number of function calls using
 a controller of type [`CallbackLimiter`][CallbackLimiter].
 The program includes a loop in which a callback is run five times.
 The actual callback is passed to the method `limiter.run` and the controller
-is configured to delay subsequent calls by at least 200 milliseconds.
+is configured to *delay* subsequent calls by at least 200 milliseconds.
 
 <details> <summary> Click to show the entire program listing. </summary>
 
@@ -143,8 +145,11 @@ and in step 4, after a delay of 203 milliseconds.
 
 ### Delaying and Limiting Function Calls
 
-The example below shows how to *delay* and limit the number of function calls
-using a controller of type [`CallbackDelayer`][CallbackDelayer].
+The example below shows how to *delay and limit* the number of function calls
+using a controller of type [`CallbackDelayer`][CallbackDelayer]. A callback
+delayer can be used, for example, to wrap the [`onChanged`][onChanged]
+method of a Flutter [`TextField`][TextField]. Ths will allow the user to type
+for a certain duration before [`onChanged`][onChanged] is called.
 
 <details> <summary> Click to show the entire program listing. </summary>
 
@@ -158,7 +163,7 @@ Future<void> main(List<String> arguments) async {
   print('                  delay between calls:   100 ms');
   print(' ');
 
-  final delayer = CallbackLimiter(duration: Duration(milliseconds: 200));
+  final delayer = CallbackDelayer(duration: Duration(milliseconds: 200));
 
   // ignore: unused_local_variable
   final subscription = delayer.stream.listen(
@@ -250,3 +255,7 @@ Please file feature requests and bugs at the [issue tracker].
 [busy]: https://pub.dev/documentation/callback_controller/latest/callback_controller/busy-constant.html
 
 [delaying]:https://pub.dev/documentation/callback_controller/latest/callback_controller/delaying-constant.html
+
+[TextField]: https://api.flutter.dev/flutter/material/TextField-class.html
+
+[onChanged]:  https://api.flutter.dev/flutter/material/TextField/onChanged.html
