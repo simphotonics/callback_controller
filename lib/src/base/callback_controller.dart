@@ -10,25 +10,24 @@ FutureOr<void> defaultCallback() {}
 /// To run the callback as soon as possible use [CallbackController.limiter].
 /// To delay the execution by [duration] use [CallbackController.delayer].
 abstract class CallbackController {
-  CallbackController({required this.duration})
+  new({required this.duration})
     : current = CallbackControllerState.ready.stamp,
-      _controller =
-          StreamController<CallbackControllerState>()
-            ..add(CallbackControllerState.ready);
+      _controller = StreamController<CallbackControllerState>()
+        ..add(CallbackControllerState.ready);
 
   /// Runs a callback as soon as possible and limits the calling frequency
   /// to one call per [duration].
   ///
   /// Use case: Preventing a user from making numerous expensive requests
   /// (e.g. by pressing a button widget repeatedly withing a short timespan).
-  factory CallbackController.limiter({required Duration duration}) =>
+  factory limiter({required Duration duration}) =>
       CallbackLimiter(duration: duration);
 
   /// Waits for [duration] before running a callback.
   ///
   /// Use case: Collecting and aggregating input from a Futter `TextField`
   /// while the user is typing and only processing the input after [duration].
-  factory CallbackController.delayer({required Duration duration}) =>
+  factory delayer({required Duration duration}) =>
       CallbackDelayer(duration: duration);
 
   /// After the event [delaying] is added the stream
@@ -56,10 +55,10 @@ abstract class CallbackController {
   }
 
   /// Runs and awaits [callback] and adds events to [stream].
-  Future<void> runAsync(FutureOr<void> Function() callback);
+  Future<void> runAsync(Future<void> Function() callback);
 
   /// Runs [callback] and adds events to [stream].
-  void run(FutureOr<void> Function() callback);
+  void run(void Function() callback);
 
   /// Closes the controller such that no further events will be added to
   /// [stream].
@@ -89,13 +88,13 @@ abstract class CallbackController {
 /// Use case: Preventing a user from making numerous expensive requests (e.g. by
 /// pressing a button repeatedly withing a short timespan).
 class CallbackLimiter extends CallbackController {
-  CallbackLimiter({required super.duration});
+  new({required super.duration});
 
   /// Runs [callback] and adds events to [stream] using the following sequence:
   ///
   /// * [busy], [delaying],[ready].
   @override
-  Future<void> runAsync(FutureOr<void> Function() callback) async {
+  Future<void> runAsync(Future<void> Function() callback) async {
     if (current.state.isReady) {
       try {
         _add(busy);
@@ -112,7 +111,7 @@ class CallbackLimiter extends CallbackController {
   }
 
   @override
-  void run(FutureOr<void> Function() callback) {
+  void run(void Function() callback) {
     if (current.state.isReady) {
       try {
         _add(busy);
@@ -134,7 +133,7 @@ class CallbackLimiter extends CallbackController {
 /// Use case: Collecting and aggregating input from a Futter `TextField`
 /// while the user is typing and only processing the input after [duration].
 class CallbackDelayer extends CallbackController {
-  CallbackDelayer({required super.duration});
+  new({required super.duration});
 
   late FutureOr<void> Function() _callback = defaultCallback;
 
@@ -144,7 +143,7 @@ class CallbackDelayer extends CallbackController {
   /// * Calling the [runAsync] repeatedly during the state [delaying] will cause
   /// [callback] to be replace with the latest version of [callback].
   @override
-  Future<void> runAsync(FutureOr<void> Function() callback) async {
+  Future<void> runAsync(Future<void> Function() callback) async {
     // Update callback to make sure the latest version is called.
     _callback = callback;
 
@@ -168,7 +167,7 @@ class CallbackDelayer extends CallbackController {
   /// * If another [callback] is run during the delay period the
   /// latest [callback] will replace the earlier [callback].
   @override
-  FutureOr<void> run(FutureOr<void> Function() callback) {
+  void run(void Function() callback) {
     // Update callback to make sure the latest version is called.
     _callback = callback;
 

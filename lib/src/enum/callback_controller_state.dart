@@ -39,16 +39,22 @@ const busy = CallbackControllerState.busy;
 const delaying = CallbackControllerState.delaying;
 
 class TimeStampedCallbackControllerState {
-  TimeStampedCallbackControllerState({required this.state});
+  new({required this.state});
   final CallbackControllerState state;
   final DateTime dateTimeStamp = DateTime.now();
 
   @override
-  String toString() => '$state ${dateTimeStamp.smsus}';
+  String toString() => '$state at $dateTimeStamp';
 }
 
-extension OneMilliMicroSeconds on DateTime {
-  String get smsus =>
+extension TimeFormat on DateTime {
+  String get hourMinSec => '${hour}h:${minute}min:${second}s';
+
+  String get minSecMillisec {
+    return '${minute}min:${second}s:${millisecond.toString().padLeft(3, '0')}ms';
+  }
+
+  String get secMillisecMicrosec =>
       '${second}s:${'$millisecond'.padLeft(3, '0')}ms:'
       '${'$microsecond'.padLeft(3, '0')}us';
 }
