@@ -83,64 +83,79 @@ import 'dart:async';
 import 'package:callback_controller/callback_controller.dart';
 
 Future<void> main(List<String> arguments) async {
-  print('Example: Callback limiter with duration: 200 ms');
+  print('Example: Callback limiter with duration: 1000 ms');
   print('                  delay between calls:   100 ms');
   print(' ');
 
-  final limiter = CallbackLimiter(duration: Duration(milliseconds: 200));
+  final limiter = CallbackLimiter(duration: Duration(milliseconds: 1000));
 
   // ignore: unused_local_variable
   final subscription = limiter.stream.listen(
-    (event) => print('    > stream event: $event'),
-    onDone: () => print('Done'),
+    (event) => print(
+      '    > stream event: $event'.padRight(30, ' ') +
+          DateTime.now().secMillisecMicrosec,
+    ),
+    onDone: () => print(
+      'The delay between stream events: delaying->ready is approx: 1000 ms.',
+    ),
     onError: (error) => print(error),
   );
 
   for (var i = 0; i < 5; i++) {
-    print(
-        'Step $i -------------------------- ${DateTime.now().smsus} ----'
-        '-------');
+    print('Step $i ---------------------------');
     limiter.run(() {
-      print('    in callback from step $i: ${limiter.currentState}');
+      print('    in callback from step $i: ${limiter.current}');
     });
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 2000), () {
+      print('    <= delaying 100 ms');
+    });
   }
-}
+
+  await limiter.close();
+  await subscription.cancel();
 ```
 </details>
 <details> <summary> Click to show the console output. </summary>
 
 ```Console
-$ dart bin/limiter_example.dart
-Example: Callback delayer with duration: 200 ms
+$ dart example/bin/limiter_example.dart
+Example: Callback limiter with duration: 1000 ms
                   delay between calls:   100 ms
 
-Step 0 -------------------------- 9s:322ms:442us -----------
-    in callback from step 0: busy 9s:325ms:711us
-    > stream event: ready
-    > stream event: busy
-    > stream event: delaying
-Step 1 -------------------------- 9s:434ms:902us -----------
-Step 2 -------------------------- 9s:537ms:329us -----------
-    in callback from step 2: busy 9s:537ms:732us
-    > stream event: ready
-    > stream event: busy
-    > stream event: delaying
-Step 3 -------------------------- 9s:639ms:426us -----------
-Step 4 -------------------------- 9s:740ms:443us -----------
-    in callback from step 4: busy 9s:740ms:799us
-    > stream event: ready
-    > stream event: busy
-    > stream event: delaying
-
+Step 0 ---------------------------
+    in callback from step 0: busy at 2026-10-27 17:41:18.208671
+    > stream event: ready     18s:218ms:084us
+    > stream event: busy      18s:218ms:570us
+    > stream event: delaying  18s:218ms:613us
+    > stream event: ready     19s:222ms:115us
+    <= delaying 100 ms
+Step 1 ---------------------------
+    in callback from step 1: busy at 2026-10-27 17:41:20.228102
+    > stream event: busy      20s:228ms:911us
+    > stream event: delaying  20s:229ms:185us
+    > stream event: ready     21s:229ms:930us
+    <= delaying 100 ms
+Step 2 ---------------------------
+    in callback from step 2: busy at 2026-10-27 17:41:22.229974
+    > stream event: busy      22s:230ms:501us
+    > stream event: delaying  22s:230ms:783us
+    > stream event: ready     23s:231ms:904us
+    <= delaying 100 ms
+Step 3 ---------------------------
+    in callback from step 3: busy at 2026-10-27 17:41:24.232031
+    > stream event: busy      24s:232ms:589us
+    > stream event: delaying  24s:232ms:759us
+    > stream event: ready     25s:233ms:818us
+    <= delaying 100 ms
+Step 4 ---------------------------
+    in callback from step 4: busy at 2026-10-27 17:41:26.233879
+    > stream event: busy      26s:234ms:295us
+    > stream event: delaying  26s:234ms:579us
+    > stream event: ready     27s:234ms:928us
+    <= delaying 100 ms
+The delay between stream evens: delaying->ready is approx: 1000 ms.
 ```
 </details>
-
-Note that there is a delay of 100 milliseconds
-between subsequent callback runs.
-As the console output shows, the callback is run immediately in step 0,
-and then again in step 2 after a delay of 212 milliseconds,
-and in step 4, after a delay of 203 milliseconds.
 
 
 ### Delaying and Limiting Function Calls
@@ -159,67 +174,71 @@ import 'dart:async';
 import 'package:callback_controller/callback_controller.dart';
 
 Future<void> main(List<String> arguments) async {
-  print('Example: Callback delayer with duration: 200 ms');
-  print('                  delay between calls:   100 ms');
+  print('Example: CallbackDelayer with delay: 1000 ms');
+  print('            User delay between calls: 300 ms');
   print(' ');
 
-  final delayer = CallbackDelayer(duration: Duration(milliseconds: 200));
+  final delayer = CallbackDelayer(duration: Duration(milliseconds: 1000));
 
   // ignore: unused_local_variable
   final subscription = delayer.stream.listen(
-    (event) => print('    > stream event: $event'),
-    onDone: () => print('Done'),
+    (event) => print(
+      '    > stream event: $event'.padRight(30, ' ') +
+          DateTime.now().secMillisecMicrosec,
+    ),
+    onDone: () => print(
+      'The function passed to delayer.run is called at'
+      'most once every 1000 ms. ',
+    ),
     onError: (error) => print(error),
   );
 
   for (var i = 0; i < 5; i++) {
-    print(
-        'Step $i -------------------------- ${DateTime.now().smsus} ----'
-        '-------');
+    print('Step $i -------------------------');
     delayer.run(() {
-      print('    in callback from step $i: ${delayer.currentState}');
+      print(
+        '    in callback from step $i: ' +
+            delayer.current.state.toString() +
+            '  ' +
+            delayer.current.dateTimeStamp.secMillisecMicrosec,
+      );
     });
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 300));
   }
+
+  await delayer.close();
+  await subscription.cancel();
 }
 ```
 </details>
 <details> <summary> Click to show the console output. </summary>
 
 ```Console
-$ dart bin/delayer_example.dart
-Example: Callback delayer with duration: 200 ms
-                  delay between calls:   100 ms
+$ dart example/bin/delayer_example.dart
+Example: CallbackDelayer with delay: 1000 ms
+            User delay between calls: 300 ms
 
-Step 0 -------------------------- 31s:238ms:322us -----------
-    > stream event: ready
-    > stream event: delaying
-Step 1 -------------------------- 31s:352ms:356us -----------
-    in callback from step 1: busy 31s:447ms:234us
-    > stream event: busy
-    > stream event: ready
-Step 2 -------------------------- 31s:453ms:446us -----------
-    > stream event: delaying
-Step 3 -------------------------- 31s:554ms:423us -----------
-    in callback from step 3: busy 31s:654ms:410us
-    > stream event: busy
-    > stream event: ready
-Step 4 -------------------------- 31s:655ms:617us -----------
-    > stream event: delaying
-    in callback from step 4: busy 31s:856ms:396us
-    > stream event: busy
-    > stream event: ready
+Step 0 -------------------------
+    > stream event: ready     53s:844ms:291us
+    > stream event: delaying  53s:847ms:838us
+Step 1 -------------------------
+Step 2 -------------------------
+Step 3 -------------------------
+    in callback from step 3: busy  54s:840ms:112us
+    > stream event: busy      54s:844ms:111us
+    > stream event: ready     54s:845ms:518us
+Step 4 -------------------------
+    > stream event: delaying  55s:063ms:448us
+The function passed to delayer.run is called atmost once every 1000 ms.
 ```
 </details>
 
 The program above includes a loop in which a callback is run five times.
 The actual callback is passed to the method `delayer.run` and the controller
-is configured to delay subsequent calls by at least 200 milliseconds. Note that
-there is a delay of 100 milliseconds between subsequent calls.
+is configured to delay subsequent calls by at least 1000 milliseconds. Note that
+there is a delay of 300 milliseconds between subsequent calls.
 As the console output shows, the callback is *not* run in step 0.
-Instead, it is called in step 1 after a delay of 209 ms. The callback is run
-again in step 3 after a delay of 207 ms. The callback is also run after
-step 4 following a delay of 202 milliseconds.
+Instead, it is called in step 3 after a delay of 1000 ms. 
 
 ## Examples
 
