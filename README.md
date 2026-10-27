@@ -23,7 +23,7 @@ This kind of behaviour can be achieved by using the methods
 
 * debouncing: Starting a countdown timer when a function is called, but
 accepting  subsequent calls. After the timer has completed its countdown, the
-latest call is finally executed. Debouncing can be achieved using the method
+latest call is finally executed. Debouncing can be achieved using the methods
 `run` and `runAsync` provided by [`CallbackDelayer`][CallbackDelayer].
 
 
@@ -238,7 +238,7 @@ The actual callback is passed to the method `delayer.run` and the controller
 is configured to delay subsequent calls by at least 1000 milliseconds. Note that
 there is a delay of 300 milliseconds between subsequent calls.
 As the console output shows, the callback is *not* run in step 0.
-Instead, it is called in step 3 after a delay of 1000 ms. 
+Instead, it is called in step 3 after a delay of 1000 ms.
 
 ## Examples
 
